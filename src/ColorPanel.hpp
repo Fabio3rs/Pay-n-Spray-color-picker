@@ -15,7 +15,7 @@ struct ColorPanel {
         myPanel = -1;
     }
 
-    int getActiveRow() const {
+    [[nodiscard]] auto getActiveRow() const -> int {
         if (!exists()) {
             return -1;
         }
@@ -33,5 +33,17 @@ struct ColorPanel {
         myPanel = createPanel(a, b, c, d, e, f, g, h, i);
     }
 
-    auto exists() const -> bool { return myPanel != -1; }
+    [[nodiscard]] auto getCarColourFromGrid() const -> int {
+        auto CMenuSystem__GetCarColourFromGrid =
+            injector::cstd<uint8_t(uint8_t, uint8_t)>::call<0x5822B0>;
+
+        const int SELECTED = getActiveRow();
+        if (SELECTED < 0) {
+            return -1;
+        }
+
+        return CMenuSystem__GetCarColourFromGrid(myPanel, SELECTED);
+    }
+
+    [[nodiscard]] auto exists() const -> bool { return myPanel != -1; }
 };
