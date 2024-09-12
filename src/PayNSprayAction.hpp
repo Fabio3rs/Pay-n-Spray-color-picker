@@ -131,7 +131,7 @@ struct PayNSprayAction {
         *(uint8_t *)(playersVeh + 0x437) = carColors[3];
 
         // Dirt level
-        *(uint8_t *)(playersVeh + 0x4B0) = 0;
+        *(float *)(playersVeh + 0x4B0) = 0.0;
 
         (*(void(__thiscall **)(int))(*(DWORD *)playersVeh + 200))(playersVeh);
         *(DWORD *)(playersVeh + 1216) = 1148846080;
