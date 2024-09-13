@@ -23,14 +23,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "ColorPanel.hpp"
 #include "PayNSprayAction.hpp"
 #include <array>
 #include <cstdint>
+
 // https://github.com/thelink2012/injector
 
 namespace {
 
 PayNSprayAction act;
+ColorPanel myPanel;
 
 void inject() {
     injector::MakeJMP(0x44AEC0 + 5, 0x44B3FF);
@@ -39,10 +42,31 @@ void inject() {
     injector::MakeNOP(0x44AE4A, 5);
 
     injector::MakeInline<0x44AEC0>([](injector::reg_pack &regs) {
+        if (!myPanel.exists()) {
+            static std::array panelWat{"DUMMY", "DUMMY", "DUMMY", "DUMMY"};
+            myPanel.create(1, panelWat.data(), 29.0, 145.0, 40.0, 8, 1, 1, 1);
+        }
+
         act.playersVeh = getPlayerVehicle(-1, 0);
         act.garageId = regs.esi;
-        if (act.runSelection() == PayNSprayAction::SELECTION_STATE::START) {
+        act.selectedColor = myPanel.getCarColourFromGrid();
+
+        PayNSprayAction::showSelectColorMsg(act.selColorState);
+
+        using SELECTION_STATE = PayNSprayAction::SELECTION_STATE;
+
+        switch (act.runSelection()) {
+        case SELECTION_STATE::NONE:
+            break;
+        case SELECTION_STATE::START:
             act.runPayNSprayLogic();
+            break;
+        case SELECTION_STATE::SELECTED:
+            act.runPayNSprayLogic();
+            break;
+        case SELECTION_STATE::EXIT:
+            PayNSprayAction::openGarageDoor(act.garageId);
+            break;
         }
     });
 }

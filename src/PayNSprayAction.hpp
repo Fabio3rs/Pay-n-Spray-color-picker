@@ -1,5 +1,4 @@
 #pragma once
-#include "ColorPanel.hpp"
 #include "OptionSelect.hpp"
 #include <array>
 #include <cstdint>
@@ -23,13 +22,13 @@ auto textHighPriority = injector::cstd<void(
 
 struct PayNSprayAction {
     std::array<uint8_t, 4> carColors{};
+    std::array<uint8_t, 4> currentCarColors{};
     uint32_t playersVeh{};
     uint32_t garageId{};
     int selColorState = 0;
+    int selectedColor{};
 
-    ColorPanel myPanel;
-
-    enum SELECTION_STATE { NONE, START };
+    enum SELECTION_STATE { NONE, EXIT, SELECTED, START };
 
     static void showSelectColorMsg(int selColor) {
         std::array msgs = {"Select 1st color / Selecione a 1a cor",
@@ -43,17 +42,8 @@ struct PayNSprayAction {
         static OptionSelect::OPTIONS LastAction{OptionSelect::OPTIONS::NONE};
 
         if (playersVeh == 0) {
-            openGarageDoor(garageId);
-            myPanel.remove();
             selColorState = 0;
-            return SELECTION_STATE::NONE;
-        }
-
-        showSelectColorMsg(selColorState);
-
-        if (!myPanel.exists()) {
-            static std::array panelWat{"DUMMY", "DUMMY", "DUMMY", "DUMMY"};
-            myPanel.create(1, panelWat.data(), 29.0, 145.0, 40.0, 8, 1, 1, 1);
+            return SELECTION_STATE::EXIT;
         }
 
         OptionSelect opts;
@@ -66,13 +56,10 @@ struct PayNSprayAction {
         LastAction = ACTION;
 
         if (ACTION == OptionSelect::CANCEL) {
-            openGarageDoor(garageId);
-            myPanel.remove();
             selColorState = 0;
-            return SELECTION_STATE::NONE;
+            return SELECTION_STATE::EXIT;
         }
 
-        const int selectedColor = myPanel.getCarColourFromGrid();
         const int MAX_CAR_COLORS = 4;
 
         if (selectedColor >= 0 && ACTION == OptionSelect::ACCEPT) {
@@ -80,11 +67,9 @@ struct PayNSprayAction {
             ++selColorState;
 
             if (selColorState != MAX_CAR_COLORS) {
-                myPanel.remove();
-                return SELECTION_STATE::NONE;
+                return SELECTION_STATE::SELECTED;
             }
 
-            myPanel.remove();
             return SELECTION_STATE::START;
         }
 
@@ -94,11 +79,9 @@ struct PayNSprayAction {
             ++selColorState;
 
             if (selColorState != MAX_CAR_COLORS) {
-                myPanel.remove();
-                return SELECTION_STATE::NONE;
+                return SELECTION_STATE::SELECTED;
             }
 
-            myPanel.remove();
             return SELECTION_STATE::START;
         }
 
