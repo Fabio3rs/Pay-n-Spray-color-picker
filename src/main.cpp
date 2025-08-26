@@ -60,12 +60,14 @@ void inject() {
             break;
         case SELECTION_STATE::START:
             act.runPayNSprayLogic();
+            myPanel.remove();
             break;
         case SELECTION_STATE::SELECTED:
-            act.runPayNSprayLogic();
+            myPanel.remove();
             break;
         case SELECTION_STATE::EXIT:
             PayNSprayAction::openGarageDoor(act.garageId);
+            myPanel.remove();
             break;
         }
     });

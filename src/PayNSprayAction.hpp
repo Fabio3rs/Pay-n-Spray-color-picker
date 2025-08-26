@@ -18,6 +18,11 @@ auto textLowPriority = injector::cstd<void(
     const char *text, unsigned time, bool flag1, bool flag2)>::call<0x00580750>;
 auto textHighPriority = injector::cstd<void(
     const char *text, unsigned time, bool flag1, bool flag2)>::call<0x0069F0B0>;
+
+constexpr unsigned short STAT_AUTO_REPAIR_AND_PAINTING_BUDGET = 0x10;
+
+auto CStats__IncrementStat =
+    injector::cstd<void(unsigned short, float)>::call<0x55C180>;
 } // namespace
 
 struct PayNSprayAction {
@@ -116,8 +121,18 @@ struct PayNSprayAction {
         // Dirt level
         *(float *)(playersVeh + 0x4B0) = 0.0;
 
+        // veh->vehicle.m_nFlags[6] &= 0x7F;
+        // Clear bDisableParticles flag? (m_nFlags[6], offset 0x42E)
+        // 00000428 m_nFlags        db 8
+        *(uint8_t *)(playersVeh + 0x42E) &= 0x7F;
+
         (*(void(__thiscall **)(int))(*(DWORD *)playersVeh + 200))(playersVeh);
         *(DWORD *)(playersVeh + 1216) = 1148846080;
+
+        // veh->vehicle.m_nFlags[7] |= 1;
+        // Resprayed flag?
+        // Set the "HasBeenResprayed" flag (see VehicleFlags::bHasBeenResprayed)
+        *(uint8_t *)(playersVeh + 0x42F) |= 1;
 
         // Garage door
         openGarageDoor(garageId);
@@ -132,6 +147,9 @@ struct PayNSprayAction {
             } else {
                 CGarages__TriggerMessage(pol ? "GA_2" : "GA_XX", -1, 4000, -1);
                 playerMoney -= 100;
+
+                CStats__IncrementStat(STAT_AUTO_REPAIR_AND_PAINTING_BUDGET,
+                                      100.0);
             }
         } else {
             CGarages__TriggerMessage("GA_22", -1, 4000, -1);

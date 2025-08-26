@@ -8,7 +8,7 @@ struct OptionSelect {
     auto operator()() -> OPTIONS {
         auto CScriptThread__getPlayerKeyState = injector::thiscall<uint16_t(
             void *, uint16_t, uint16_t)>::call<0x485B10>;
-        if (CScriptThread__getPlayerKeyState(nullptr, 0, 4) != 0U) {
+        if (CScriptThread__getPlayerKeyState(nullptr, 0, 14) != 0U) {
             return SKIP;
         }
         if (CScriptThread__getPlayerKeyState(nullptr, 0, 16) != 0U) {
