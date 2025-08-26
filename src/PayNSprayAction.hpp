@@ -1,5 +1,4 @@
 #pragma once
-#include "ColorPanel.hpp"
 #include "OptionSelect.hpp"
 #include <array>
 #include <cstdint>
@@ -19,17 +18,22 @@ auto textLowPriority = injector::cstd<void(
     const char *text, unsigned time, bool flag1, bool flag2)>::call<0x00580750>;
 auto textHighPriority = injector::cstd<void(
     const char *text, unsigned time, bool flag1, bool flag2)>::call<0x0069F0B0>;
+
+constexpr unsigned short STAT_AUTO_REPAIR_AND_PAINTING_BUDGET = 0x10;
+
+auto CStats__IncrementStat =
+    injector::cstd<void(unsigned short, float)>::call<0x55C180>;
 } // namespace
 
 struct PayNSprayAction {
     std::array<uint8_t, 4> carColors{};
+    std::array<uint8_t, 4> currentCarColors{};
     uint32_t playersVeh{};
     uint32_t garageId{};
     int selColorState = 0;
+    int selectedColor{};
 
-    ColorPanel myPanel;
-
-    enum SELECTION_STATE { NONE, START };
+    enum SELECTION_STATE { NONE, EXIT, SELECTED, START };
 
     static void showSelectColorMsg(int selColor) {
         std::array msgs = {"Select 1st color / Selecione a 1a cor",
@@ -43,17 +47,8 @@ struct PayNSprayAction {
         static OptionSelect::OPTIONS LastAction{OptionSelect::OPTIONS::NONE};
 
         if (playersVeh == 0) {
-            openGarageDoor(garageId);
-            myPanel.remove();
             selColorState = 0;
-            return SELECTION_STATE::NONE;
-        }
-
-        showSelectColorMsg(selColorState);
-
-        if (!myPanel.exists()) {
-            static std::array panelWat{"DUMMY", "DUMMY", "DUMMY", "DUMMY"};
-            myPanel.create(1, panelWat.data(), 29.0, 145.0, 40.0, 8, 1, 1, 1);
+            return SELECTION_STATE::EXIT;
         }
 
         OptionSelect opts;
@@ -66,13 +61,10 @@ struct PayNSprayAction {
         LastAction = ACTION;
 
         if (ACTION == OptionSelect::CANCEL) {
-            openGarageDoor(garageId);
-            myPanel.remove();
             selColorState = 0;
-            return SELECTION_STATE::NONE;
+            return SELECTION_STATE::EXIT;
         }
 
-        const int selectedColor = myPanel.getCarColourFromGrid();
         const int MAX_CAR_COLORS = 4;
 
         if (selectedColor >= 0 && ACTION == OptionSelect::ACCEPT) {
@@ -80,11 +72,9 @@ struct PayNSprayAction {
             ++selColorState;
 
             if (selColorState != MAX_CAR_COLORS) {
-                myPanel.remove();
-                return SELECTION_STATE::NONE;
+                return SELECTION_STATE::SELECTED;
             }
 
-            myPanel.remove();
             return SELECTION_STATE::START;
         }
 
@@ -94,11 +84,9 @@ struct PayNSprayAction {
             ++selColorState;
 
             if (selColorState != MAX_CAR_COLORS) {
-                myPanel.remove();
-                return SELECTION_STATE::NONE;
+                return SELECTION_STATE::SELECTED;
             }
 
-            myPanel.remove();
             return SELECTION_STATE::START;
         }
 
@@ -133,8 +121,18 @@ struct PayNSprayAction {
         // Dirt level
         *(float *)(playersVeh + 0x4B0) = 0.0;
 
+        // veh->vehicle.m_nFlags[6] &= 0x7F;
+        // Clear bDisableParticles flag? (m_nFlags[6], offset 0x42E)
+        // 00000428 m_nFlags        db 8
+        *(uint8_t *)(playersVeh + 0x42E) &= 0x7F;
+
         (*(void(__thiscall **)(int))(*(DWORD *)playersVeh + 200))(playersVeh);
         *(DWORD *)(playersVeh + 1216) = 1148846080;
+
+        // veh->vehicle.m_nFlags[7] |= 1;
+        // Resprayed flag?
+        // Set the "HasBeenResprayed" flag (see VehicleFlags::bHasBeenResprayed)
+        *(uint8_t *)(playersVeh + 0x42F) |= 1;
 
         // Garage door
         openGarageDoor(garageId);
@@ -149,6 +147,9 @@ struct PayNSprayAction {
             } else {
                 CGarages__TriggerMessage(pol ? "GA_2" : "GA_XX", -1, 4000, -1);
                 playerMoney -= 100;
+
+                CStats__IncrementStat(STAT_AUTO_REPAIR_AND_PAINTING_BUDGET,
+                                      100.0);
             }
         } else {
             CGarages__TriggerMessage("GA_22", -1, 4000, -1);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <cstdint>
 #include <injector/calling.hpp>
 
@@ -24,13 +25,20 @@ struct ColorPanel {
         return getPanelActiveRow(myPanel);
     }
 
-    void create(unsigned char a, const char **b, float c, float d, float e,
-                unsigned char f, char g, char h, char i) {
+    auto create(unsigned char type, const char *title, float posX, float posY,
+                float width, char columns, bool interactive, bool background,
+                char alignment) -> int {
+        if (strlen(title) > 9) {
+            assert(false && "Title too long"); // NOLINT
+            title = "TooLong";
+        }
         remove();
         auto createPanel = injector::cstd<int(
-            unsigned char, const char **, float, float, float, unsigned char,
-            char, char, char)>::call<0x582300>;
-        myPanel = createPanel(a, b, c, d, e, f, g, h, i);
+            unsigned char, const char *, float, float, float, unsigned char,
+            bool, bool, char)>::call<0x582300>;
+        myPanel = createPanel(type, title, posX, posY, width, columns,
+                              interactive, background, alignment);
+        return myPanel;
     }
 
     [[nodiscard]] auto getCarColourFromGrid() const -> int {
