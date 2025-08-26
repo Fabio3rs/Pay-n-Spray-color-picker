@@ -28,8 +28,8 @@ Este mod .asi permite que você selecione cores personalizadas para seu carro ao
 
 | Action / Ação | GTA SA Control / Controle do GTA SA | Default Key / Tecla Padrão |
 |---------------|-------------------------------------|----------------------------|
-| Select Color / Selecionar Cor | **Sprint** | **Left Shift** |
-| Skip Color / Pular Cor | **Jump** | **Space** |
+| Select Color / Selecionar Cor | **Sprint** | **Space** |
+| Skip Color / Pular Cor | **Jump** | **Left Shift** |
 | Exit Without Changes / Sair Sem Alterações | **Enter Vehicle** | **F** or **Enter** |
 
 **Note:** The mod uses your configured GTA SA controls. If you changed the default key bindings, use your custom keys.  
