@@ -118,7 +118,7 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 ## 🔗 Links
 
-- **Original MixMods Post:** https://www.mixmods.com.br/2014/09/selecionar-cor-no-pay-n-spray.html
+- **Original MixMods Post:** https://www.mixmods.com.br/2022/08/sa-pay-n-spray-select-color/
 - **GitHub Repository:** https://github.com/Fabio3rs/Pay-n-Spray-color-picker
 - **Issues & Support:** https://github.com/Fabio3rs/Pay-n-Spray-color-picker/issues
 
