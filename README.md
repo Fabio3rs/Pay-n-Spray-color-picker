@@ -100,7 +100,7 @@ ctest -j10 -C Release -T test --output-on-failure
 
 ## 📋 Requirements / Requisitos
 
-- Grand Theft Auto San Andreas (any version)
+- Grand Theft Auto San Andreas 1.0 US (compact exe also supported) or compatible / Grand Theft Auto San Andreas 1.0 US (exe compacto também suportado) ou compatível
 - ASI Loader (Silent's ASI Loader recommended)
 - Windows operating system
 
