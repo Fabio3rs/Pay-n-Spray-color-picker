@@ -26,11 +26,14 @@ Este mod .asi permite que você selecione cores personalizadas para seu carro ao
 
 ## 🎮 Controls / Controles
 
-| Action / Ação | Key / Tecla |
-|---------------|-------------|
-| Accept Selection / Aceitar Seleção | **Tab** |
-| Skip Current Color / Pular Cor Atual | **Left Shift** |
-| Cancel / Cancelar | **Backspace** |
+| Action / Ação | GTA SA Control / Controle do GTA SA | Default Key / Tecla Padrão |
+|---------------|-------------------------------------|----------------------------|
+| Select Color / Selecionar Cor | **Sprint** | **Left Shift** |
+| Skip Color / Pular Cor | **Jump** | **Space** |
+| Exit Without Changes / Sair Sem Alterações | **Enter Vehicle** | **F** or **Enter** |
+
+**Note:** The mod uses your configured GTA SA controls. If you changed the default key bindings, use your custom keys.  
+**Nota:** O mod usa seus controles configurados do GTA SA. Se você alterou as teclas padrão, use suas teclas personalizadas.
 
 ## 📥 Installation / Instalação
 
@@ -51,18 +54,22 @@ Este mod .asi permite que você selecione cores personalizadas para seu carro ao
 2. Enter the garage as usual
 3. A color selection panel will appear
 4. Use arrow keys to navigate the color grid
-5. Press **Tab** to select a color or **Left Shift** to skip
+5. Press **Sprint** key to select a color or **Jump** key to skip that color slot
 6. Repeat for up to 4 color layers
-7. Your car will be painted with the selected colors
+7. Use **Enter Vehicle** key to exit without any changes
+8. If you skip all colors, only repairs will be applied (no color change)
+9. You can mix skip/select to change only specific color slots
 
 **Português:**
 1. Dirija seu carro para qualquer Pay 'N' Spray
 2. Entre na garagem normalmente
 3. Um painel de seleção de cores aparecerá
 4. Use as setas do teclado para navegar na grade de cores
-5. Pressione **Tab** para selecionar uma cor ou **Left Shift** para pular
+5. Pressione a tecla **Correr** para selecionar uma cor ou **Pular** para pular aquele slot de cor
 6. Repita para até 4 camadas de cores
-7. Seu carro será pintado com as cores selecionadas
+7. Use a tecla **Entrar no Veículo** para sair sem alterações
+8. Se você pular todas as cores, apenas reparos serão aplicados (sem mudança de cor)
+9. Você pode misturar pular/selecionar para alterar apenas slots de cor específicos
 
 ## 🔨 Building from Source / Compilando do Código
 
